@@ -8,6 +8,7 @@ var functionAppName = 'fn-${toLower(ramdom)}'
 var appServicePlanName = 'FunctionPlan'
 var appInsightsName = 'AppInsights'
 var storageAccountName = 'fnstor${toLower(substring(replace(ramdom, '-', ''), 0, 18))}'
+var containerName = 'files'
 //var functionNameComputed = 'LineHttpTriggeredFunction'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
@@ -33,6 +34,13 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-06-01' = {
       keySource: 'Microsoft.Storage'
     }
     accessTier: 'Hot'
+  }
+}
+
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-06-01' = {
+  name: '${storageAccount.name}/default/${containerName}'
+  properties: {
+    publicAccess:'Container'
   }
 }
 
@@ -102,6 +110,10 @@ resource functionApp 'Microsoft.Web/sites@2021-02-01' = {
         {
           name: 'CHANNEL_ACCESS_TOKEN'
           value: access
+        }
+        {
+          name: 'STORAGE_CONNECTION_STRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
         }
       ]
     }
