@@ -135,19 +135,19 @@ async function handleEvent(event) {
 
   var webhookData = JSON.parse(event.postData.contents).events[0];
   var message, replyToken, replyText, userId;
-  message = webhookData.message.text.split("\n");
-  replyToken = webhookData.replyToken;
+  // message = webhookData.message.text.split("\n");
+  // replyToken = webhookData.replyToken;
   userId = webhookData.source.userId;
-  var processing = message[0];
-  var planDate = message[1];
-  var plan = message[2];
+  // var processing = message[0];
+  // var planDate = message[1];
+  // var plan = message[2];
 
-  if(processing === '登録'){
-    replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
-  // create a echoing text message
-  const echo = { type: 'text', text: replyText };
-  return client.replyMessage(event.replyToken, echo);
-  }
+  // if(processing === '登録'){
+  //   replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
+  // // create a echoing text message
+  // const echo = { type: 'text', text: replyText };
+  // return client.replyMessage(event.replyToken, echo);
+  // }
 
   const echo = { type: 'text', text: userId };
 
