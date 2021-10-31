@@ -146,6 +146,7 @@ async function handleEvent(event) {
     replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
   // create a echoing text message
   const echo = { type: 'text', text: replyText };
+  return client.replyMessage(event.replyToken, echo);
   }
 
   // create a echoing text message
