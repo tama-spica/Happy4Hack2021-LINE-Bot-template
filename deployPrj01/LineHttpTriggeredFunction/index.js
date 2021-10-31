@@ -149,8 +149,10 @@ async function handleEvent(event) {
   // return client.replyMessage(event.replyToken, echo);
   // }
 
+  // const echo = { type: 'text', text: userId };
+
   // create a echoing text message
-  const echo = { type: 'text', text: event.message.text };
+   const echo = { type: 'text', text: event.message.text };
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
