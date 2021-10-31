@@ -133,11 +133,11 @@ async function handleEvent(event) {
     });
   }
 
-  var webhookData = JSON.parse(event.postData.contents).events[0];
+  //var webhookData = JSON.parse(event.postData.contents).events[0];
   var message, replyToken, replyText, userId;
-  // message = webhookData.message.text.split("\n");
+  // message = event.message.text.split("\n");
   // replyToken = webhookData.replyToken;
-  userId = webhookData.source.userId;
+  userId = event.source.userId;
   // var processing = message[0];
   // var planDate = message[1];
   // var plan = message[2];
