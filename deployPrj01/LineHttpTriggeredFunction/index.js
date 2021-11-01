@@ -14,7 +14,7 @@ const { getStreamData } = require('./helpers/stream.js');
 
 // create LINE SDK config from env variables
 const config = {
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
+  channelAccessToken: '0SNPpsEPdri95On5F3ZZruJcObqwI+3UGADGZn4IVX96ZdUHcHZq1HCVGEgtaiSzrqhX0SB5GgGXnDRLdE8Rv/oYNzQVtbcFnSbda4xCsd296yzr3TNDrmKAGXZzziFqARfTSf1WlQvQABTwBYHDvwdB04t89/1O/w1cDnyilFU=',
   channelSecret: process.env.CHANNEL_SECRET,
 };
 
@@ -55,124 +55,124 @@ client.pushMessage(userId, message)
 });
 
 // // event handler
-// async function handleEvent(event) {
-//   if (event.type !== 'message' && event.type !== 'postback') {
-//     // ignore non-text-message event
-//     return Promise.resolve(null);
-//   } else if (event.type === 'postback') {
-//     if (event.postback.data === 'sticker') {
-//       //https://developers.line.biz/ja/reference/messaging-api/#sticker-message
-//       //https://developers.line.biz/ja/docs/messaging-api/sticker-list/#sticker-definitions
-//       return client.replyMessage(event.replyToken,{
-//         type: 'sticker',
-//         packageId: "11537",
-//         stickerId: "52002735"
-//       });
-//     }
+async function handleEvent(event) {
+  if (event.type !== 'message' && event.type !== 'postback') {
+    // ignore non-text-message event
+    return Promise.resolve(null);
+  } else if (event.type === 'postback') {
+    if (event.postback.data === 'sticker') {
+      //https://developers.line.biz/ja/reference/messaging-api/#sticker-message
+      //https://developers.line.biz/ja/docs/messaging-api/sticker-list/#sticker-definitions
+      return client.replyMessage(event.replyToken,{
+        type: 'sticker',
+        packageId: "11537",
+        stickerId: "52002735"
+      });
+    }
   
-//   } else if (event.message.type === 'text') {
-//     if (event.message.text === 'flex') {
-//       //https://developers.line.biz/ja/reference/messaging-api/#flex-message
-//       return client.replyMessage(event.replyToken,{
-//         type: 'flex',
-//         altText: 'item list',
-//         contents: flexMsg
-//       });
-//     } else if (event.message.text === 'quick') {
-//       //https://developers.line.biz/ja/reference/messaging-api/#quick-reply
-//       return client.replyMessage(event.replyToken,{
-//         type: 'text',
-//         text: 'ステッカー欲しいですかYesかNoで答えてください, もしくは素敵な写真送って❗️',
-//         "quickReply": {
-//           "items": [
-//             {
-//               "type": "action",
-//               "action": {
-//                 "type":"postback",
-//                 "label":"Yes",
-//                 "data": "sticker",
-//                 "displayText":"ステッカーください❗️"
-//               }
-//             },
-//             {
-//               "type": "action",
-//               "action": {
-//                 "type":"message",
-//                 "label":"No",
-//                 "text":"不要。"
-//               }
-//             },
-//             {
-//               "type": "action",
-//               "action": {
-//                 "type": "camera",
-//                 "label": "camera"
-//               }
-//             }
-//           ]
-//         }
-//       });
-//     }
+  } else if (event.message.type === 'text') {
+    if (event.message.text === 'flex') {
+      //https://developers.line.biz/ja/reference/messaging-api/#flex-message
+      return client.replyMessage(event.replyToken,{
+        type: 'flex',
+        altText: 'item list',
+        contents: flexMsg
+      });
+    } else if (event.message.text === 'quick') {
+      //https://developers.line.biz/ja/reference/messaging-api/#quick-reply
+      return client.replyMessage(event.replyToken,{
+        type: 'text',
+        text: 'ステッカー欲しいですかYesかNoで答えてください, もしくは素敵な写真送って❗️',
+        "quickReply": {
+          "items": [
+            {
+              "type": "action",
+              "action": {
+                "type":"postback",
+                "label":"Yes",
+                "data": "sticker",
+                "displayText":"ステッカーください❗️"
+              }
+            },
+            {
+              "type": "action",
+              "action": {
+                "type":"message",
+                "label":"No",
+                "text":"不要。"
+              }
+            },
+            {
+              "type": "action",
+              "action": {
+                "type": "camera",
+                "label": "camera"
+              }
+            }
+          ]
+        }
+      });
+    }
 
-//   } else if (event.message.type === 'image') {
-//     //https://developers.line.biz/ja/reference/messaging-api/#image-message
-//     const blobName = uuidv4() + '.jpg'
-//     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-//     const stream = await client.getMessageContent(event.message.id);
-//     const data = await getStreamData(stream);
-//     blockBlobClient.uploadData(data);
-//     return client.replyMessage(event.replyToken,{
-//       type: 'image',
-//       originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
-//       previewImageUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`
-//     });
-//   } else if (event.message.type === 'audio') {
-//     //https://developers.line.biz/ja/reference/messaging-api/#audio-message
-//     //durationはこれでとれそう？ > https://www.npmjs.com/package/mp3-duration
-//     const blobName = uuidv4() + '.mp3'
-//     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-//     const stream = await client.getMessageContent(event.message.id);
-//     const data = await getStreamData(stream);
-//     const res = blockBlobClient.uploadData(data);
-//     return client.replyMessage(event.replyToken,{
-//       type: 'audio',
-//       originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
-//       duration: 60000
-//     });
-//   } else if (event.message.type === 'location') {
-//     //https://developers.line.biz/ja/reference/messaging-api/#location-message
-//     return client.replyMessage(event.replyToken,{
-//       type: 'location',
-//       title: 'my location',
-//       address: event.message.address,
-//       latitude: event.message.latitude,
-//       longitude: event.message.longitude
-//     });
-//   }
+  } else if (event.message.type === 'image') {
+    //https://developers.line.biz/ja/reference/messaging-api/#image-message
+    const blobName = uuidv4() + '.jpg'
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const stream = await client.getMessageContent(event.message.id);
+    const data = await getStreamData(stream);
+    blockBlobClient.uploadData(data);
+    return client.replyMessage(event.replyToken,{
+      type: 'image',
+      originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
+      previewImageUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`
+    });
+  } else if (event.message.type === 'audio') {
+    //https://developers.line.biz/ja/reference/messaging-api/#audio-message
+    //durationはこれでとれそう？ > https://www.npmjs.com/package/mp3-duration
+    const blobName = uuidv4() + '.mp3'
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const stream = await client.getMessageContent(event.message.id);
+    const data = await getStreamData(stream);
+    const res = blockBlobClient.uploadData(data);
+    return client.replyMessage(event.replyToken,{
+      type: 'audio',
+      originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
+      duration: 60000
+    });
+  } else if (event.message.type === 'location') {
+    //https://developers.line.biz/ja/reference/messaging-api/#location-message
+    return client.replyMessage(event.replyToken,{
+      type: 'location',
+      title: 'my location',
+      address: event.message.address,
+      latitude: event.message.latitude,
+      longitude: event.message.longitude
+    });
+  }
 
-//   //var webhookData = JSON.parse(event.postData.contents).events[0];
-//   var message, replyToken, replyText, userId;
-//   message = event.message.text.split("\n");
-//   // replyToken = webhookData.replyToken;
-//   userId = event.source.userId;
-//   var processing = message[0];
-//   var planDate = message[1];
-//   var plan = message[2];
+  //var webhookData = JSON.parse(event.postData.contents).events[0];
+  var message, replyToken, replyText, userId;
+  message = event.message.text.split("\n");
+  // replyToken = webhookData.replyToken;
+  userId = event.source.userId;
+  var processing = message[0];
+  var planDate = message[1];
+  var plan = message[2];
 
-//   if(processing === '登録'){
-//     replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
-//   // create a echoing text message
-//   const echo = { type: 'text', text: replyText };
-//   return client.replyMessage(event.replyToken, echo);
-//   }
+  if(processing === '登録'){
+    replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
+  // create a echoing text message
+  const echo = { type: 'text', text: replyText };
+  return client.replyMessage(event.replyToken, echo);
+  }
 
 
-//   // create a echoing text message
-//   const echo = { type: 'text', text: event.message.text };
+  // create a echoing text message
+  const echo = { type: 'text', text: event.message.text };
 
-//   // use reply API
-//   return client.replyMessage(event.replyToken, echo);
-// }
+  // use reply API
+  return client.replyMessage(event.replyToken, echo);
+}
 
 module.exports = createHandler(app);
 
