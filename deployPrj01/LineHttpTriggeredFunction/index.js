@@ -37,26 +37,26 @@ app.post('/api/linehttptriggeredfunction', line.middleware(config), (req, res) =
     });
 });
 
-//https://developers.line.biz/ja/reference/messaging-api/#send-push-message
+// //https://developers.line.biz/ja/reference/messaging-api/#send-push-message
 
-const userId = 'U568a9510055a2c90105cd5eff2868a78'
+// const userId = 'U568a9510055a2c90105cd5eff2868a78'
 
-const clientPush = new line.Client({
-  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN
-});
+// const clientPush = new line.Client({
+//   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN
+// });
 
-const message = {
-  type: 'text',
-  text: 'Hello World!'
-};
+// const message = {
+//   type: 'text',
+//   text: 'Hello World!'
+// };
 
-clientPush.pushMessage(userId, message)
-  .then(() => {
-    console.log('push!')
-  })
-  .catch((err) => {
-    // error handling
-});
+// clientPush.pushMessage(userId, message)
+//   .then(() => {
+//     console.log('push!')
+//   })
+//   .catch((err) => {
+//     // error handling
+// });
 
 // event handler
 async function handleEvent(event) {
