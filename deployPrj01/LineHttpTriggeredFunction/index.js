@@ -18,24 +18,24 @@ const config = {
   channelSecret: process.env.CHANNEL_SECRET,
 };
 
-// create LINE SDK client
-const client = new line.Client(config);
+// // create LINE SDK client
+// const client = new line.Client(config);
 
-// create Express app
-// about Express itself: https://expressjs.com/
-const app = express();
+// // create Express app
+// // about Express itself: https://expressjs.com/
+// const app = express();
 
-// register a webhook handler with middleware
-// about the middleware, please refer to doc
-app.post('/api/linehttptriggeredfunction', line.middleware(config), (req, res) => {
-  Promise
-    .all(req.body.events.map(handleEvent))
-    .then((result) => res.json(result))
-    .catch((err) => {
-      console.error(err);
-      res.status(500).end();
-    });
-});
+// // register a webhook handler with middleware
+// // about the middleware, please refer to doc
+// app.post('/api/linehttptriggeredfunction', line.middleware(config), (req, res) => {
+//   Promise
+//     .all(req.body.events.map(handleEvent))
+//     .then((result) => res.json(result))
+//     .catch((err) => {
+//       console.error(err);
+//       res.status(500).end();
+//     });
+// });
 
 //https://developers.line.biz/ja/reference/messaging-api/#send-push-message
 
