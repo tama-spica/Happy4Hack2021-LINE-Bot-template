@@ -106,8 +106,8 @@ async function handleEvent(event) {
     blockBlobClient.uploadData(data);
     return client.replyMessage(event.replyToken,{
       type: 'image',
-      originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
-      previewImageUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`
+      originalContentUrl: `https://fnstorjcpbmmeaymcrj8g9rt.blob.core.windows.net/files/test.jpg`,
+      previewImageUrl: `https://fnstorjcpbmmeaymcrj8g9rt.blob.core.windows.net/files/test.jpg`
     });
   } else if (event.message.type === 'audio') {
     //https://developers.line.biz/ja/reference/messaging-api/#audio-message
