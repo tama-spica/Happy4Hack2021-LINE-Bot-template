@@ -9,12 +9,12 @@ const { v4: uuidv4 } = require('uuid');
 const { BlobServiceClient } = require("@azure/storage-blob");
 const { getStreamData } = require('./helpers/stream.js'); 
 
-// const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.STORAGE_CONNECTION_STRING);
-// const containerClient = blobServiceClient.getContainerClient('files');
+const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.STORAGE_CONNECTION_STRING);
+const containerClient = blobServiceClient.getContainerClient('files');
 
 // create LINE SDK config from env variables
 const config = {
-  channelAccessToken: '0SNPpsEPdri95On5F3ZZruJcObqwI+3UGADGZn4IVX96ZdUHcHZq1HCVGEgtaiSzrqhX0SB5GgGXnDRLdE8Rv/oYNzQVtbcFnSbda4xCsd296yzr3TNDrmKAGXZzziFqARfTSf1WlQvQABTwBYHDvwdB04t89/1O/w1cDnyilFU=',
+  channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
   channelSecret: process.env.CHANNEL_SECRET,
 };
 
@@ -37,24 +37,7 @@ app.post('/api/linehttptriggeredfunction', line.middleware(config), (req, res) =
     });
 });
 
-//https://developers.line.biz/ja/reference/messaging-api/#send-push-message
-
-const userId = 'U568a9510055a2c90105cd5eff2868a78'
-
-const message = {
-  type: 'text',
-  text: 'Hello World!'
-};
-
-client.pushMessage(userId, message)
-  .then(() => {
-    console.log('push!')
-  })
-  .catch((err) => {
-    // error handling
-});
-
-// // event handler
+// event handler
 async function handleEvent(event) {
   if (event.type !== 'message' && event.type !== 'postback') {
     // ignore non-text-message event
@@ -82,7 +65,7 @@ async function handleEvent(event) {
       //https://developers.line.biz/ja/reference/messaging-api/#quick-reply
       return client.replyMessage(event.replyToken,{
         type: 'text',
-        text: 'ステッカー欲しいですかYesかNoで答えてください, もしくは素敵な写真送って❗️',
+        text: 'ステッカー欲しいですか❓YesかNoで答えてください, もしくは素敵な写真送って❗️',
         "quickReply": {
           "items": [
             {
@@ -149,23 +132,6 @@ async function handleEvent(event) {
       longitude: event.message.longitude
     });
   }
-
-  //var webhookData = JSON.parse(event.postData.contents).events[0];
-  var message, replyToken, replyText, userId;
-  message = event.message.text.split("\n");
-  // replyToken = webhookData.replyToken;
-  userId = event.source.userId;
-  var processing = message[0];
-  var planDate = message[1];
-  var plan = message[2];
-
-  if(processing === '登録'){
-    replyText = userId+"\n"+processing+"\n"+planDate+"\n"+plan;
-  // create a echoing text message
-  const echo = { type: 'text', text: replyText };
-  return client.replyMessage(event.replyToken, echo);
-  }
-
 
   // create a echoing text message
   const echo = { type: 'text', text: event.message.text };
