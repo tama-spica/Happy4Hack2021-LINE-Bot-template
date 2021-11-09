@@ -65,7 +65,7 @@ async function handleEvent(event) {
       //https://developers.line.biz/ja/reference/messaging-api/#quick-reply
       return client.replyMessage(event.replyToken,{
         type: 'text',
-        text: 'ステッカー欲しいですかYesかNoで答えてください, もしくは素敵な写真送って❗️',
+        text: 'ステッカー欲しいですか❓YesかNoで答えてください, もしくは素敵な写真送って❗️',
         "quickReply": {
           "items": [
             {
@@ -106,8 +106,8 @@ async function handleEvent(event) {
     blockBlobClient.uploadData(data);
     return client.replyMessage(event.replyToken,{
       type: 'image',
-      originalContentUrl: `https://fnstorjcpbmmeaymcrj8g9rt.blob.core.windows.net/files/test.jpg`,
-      previewImageUrl: `https://fnstorjcpbmmeaymcrj8g9rt.blob.core.windows.net/files/test.jpg`
+      originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
+      previewImageUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`
     });
   } else if (event.message.type === 'audio') {
     //https://developers.line.biz/ja/reference/messaging-api/#audio-message
