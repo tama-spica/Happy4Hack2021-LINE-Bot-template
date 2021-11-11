@@ -60,6 +60,25 @@ async function handleEvent(event) {
         stickerId: "52002735"
       });
     }
+    else if (event.postback.data ===  'yes') {
+
+      // create a echoing text message
+   const echo = { type: 'text', text: "頑張ったね！"};
+
+   // use reply API
+   return client.replyMessage(event.replyToken, echo);
+  } 
+  else if (event.postback.data ===  'no') {
+
+          // create a echoing text message
+   const echo = { type: 'text', text: "しっかりして！"};
+
+   // use reply API
+   return client.replyMessage(event.replyToken, echo);
+    
+  
+  } 
+    
   
   } else if (event.message.type === 'text') {
     if (event.message.text === 'flex') {
@@ -169,31 +188,31 @@ const newItem = {
      */
      const { resource: createdItem } = await container.items.create(newItem);
     
-     // </CreateItem>
-     //ここまでDBへの登録
+//      // </CreateItem>
+//      //ここまでDBへの登録
 
-     //DBから取得
-    // <QueryItems>
-    console.log(`Querying container: Items`);
+//      //DBから取得
+//     // <QueryItems>
+//     console.log(`Querying container: Items`);
 
-    // query to return all items
-    const querySpec = {
-      query: "SELECT * from c"
-    };
+    // // query to return all items
+    // const querySpec = {
+    //   query: "SELECT * from c"
+    // };
     
-    // read all items in the Items container
-    const { resources: items } = await container.items
-      .query(querySpec)
-      .fetchAll();
+    // // read all items in the Items container
+    // const { resources: items } = await container.items
+    //   .query(querySpec)
+    //   .fetchAll();
 
-    let getitems = "";
-    items.forEach(item => {
-      console.log(`${item.id} - ${item.description}`);
-      getitems =  getitems+item.description;
-    });
+    // let getitems = "";
+    // items.forEach(item => {
+    //   console.log(`${item.id} - ${item.description}`);
+    //   getitems =  getitems+item.description;
+    // });
 
   // create a echoing text message
-   const echo = { type: 'text', text: getitems};
+   const echo = { type: 'text', text: event.source.userId};
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
