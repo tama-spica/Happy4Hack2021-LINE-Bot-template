@@ -20,7 +20,7 @@ module.exports = async function (context, myTimer) {
     //https://developers.line.biz/ja/reference/messaging-api/#send-push-message
 const line = require('@line/bot-sdk');
 
-const token = '0SNPpsEPdri95On5F3ZZruJcObqwI+3UGADGZn4IVX96ZdUHcHZq1HCVGEgtaiSzrqhX0SB5GgGXnDRLdE8Rv/oYNzQVtbcFnSbda4xCsd296yzr3TNDrmKAGXZzziFqARfTSf1WlQvQABTwBYHDvwdB04t89/1O/w1cDnyilFU='
+const token = 'Mg5nrkfeEkY+kZQivmgr65O1L8P1JJkD/H6ZJT02iWS4sykzMhl34ueEIIXF4UF+GQakfVzQcOqqO7IR8KLsmjHllYYXI4YP05IuYVDwCa6gbTSd0EXwp0FesTUV/4S/YU/ZmHeHQnd0CQrzwqu9AgdB04t89/1O/w1cDnyilFU='
 const userId2 = 'U568a9510055a2c90105cd5eff2868a78'
 const userId1 = 'Uf22a02d8fe3cba898a661e4f8d9abc0b'
 
@@ -65,7 +65,8 @@ context.log("10分後"+date2);
     
     const querySpec = {
      //  query: "SELECT * from c "
-    query: "SELECT * from c WHERE c.time between '" + date2 +"' and '" + date1 +"'"
+    // query: "SELECT * from c WHERE c.time between '" + date2 +"' and '" + date1 +"'"
+    query: "SELECT * from c "
     };
     
     // read all items in the Items container
@@ -90,7 +91,7 @@ context.log("10分後"+date2);
 
       const message = {
         type: 'text',
-        text: item.message+ 'はちゃんとやったの❓\n「はい」か「いいえ」で答えててね❗️',
+        text: item.description+ '\n「はい」か「いいえ」で答えててね❗️',
         "quickReply": {
           "items": [
             {
@@ -142,6 +143,37 @@ context.log("10分後"+date2);
             ]
           }
         }
+
+        const imageMessage = {
+          type: 'image',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/tsun.png`,
+      previewImageUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/tsun.png`,
+          "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type":"postback",
+                    "data":"yes",
+                    "label":"はい",
+                    "displayText":"ちゃんとやったよ！"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type":"postback",
+                    "data":"no",
+                    "label":"いいえ",
+                    "text":"まだできてないよ・・・・・"
+                  }
+                },
+              ]
+            }
+          }
+  
+
+
       
      client.pushMessage(item.userId, message)
         .then(() => {
@@ -158,6 +190,13 @@ context.log("10分後"+date2);
       .catch((err) => {
         // error handling
     });
+    client.pushMessage(item.userId, imageMessage)
+    .then(() => {
+      console.log('push!')
+    })
+    .catch((err) => {
+      // error handling
+  });
 
       });
     

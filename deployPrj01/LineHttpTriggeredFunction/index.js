@@ -1,6 +1,8 @@
 //https://github.com/line/line-bot-sdk-nodejs/tree/next/examples/echo-bot
 //https://himanago.hatenablog.com/entry/2020/04/23/205202
 'use strict';
+const Obniz = require("obniz");
+const fetch = require('node-fetch');
 // @ts-check DB関連の設定
 //  <ImportConfiguration>
 const CosmosClient = require("@azure/cosmos").CosmosClient;
@@ -63,7 +65,53 @@ async function handleEvent(event) {
     else if (event.postback.data ===  'yes') {
 
       // create a echoing text message
-   const echo = { type: 'text', text: "頑張ったね！"};
+   //const echo = { type: 'text', text: "頑張ったね！"};
+
+   const echo =
+   [
+    {
+        "type":"text",
+        "text":"頑張ったね！"
+    },
+    {
+      type: 'image',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/dere.png`,
+      previewImageUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/dere.png`
+    },
+    {
+      type: 'audio',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/ganbattane.mp3`,
+      duration: 60000
+    }
+]
+
+   //obniz
+
+   var obniz = new Obniz("29240510");
+      var connected = await obniz.connectWait({timeout:10});
+      
+      if (connected){
+      var servo = obniz.wired("ServoMotor", {gnd:0,vcc:1,signal:2});
+      servo.angle(10.0); // half position
+      await obniz.wait(500);
+      servo.angle(100.0); // half position
+      await obniz.wait(500);
+      servo.angle(10.0); // half position
+      await obniz.wait(500);
+      servo.angle(100.0); // half position
+      await obniz.wait(500);
+      servo.angle(10.0); // half position
+      await obniz.wait(500);
+      servo.angle(100.0); // half position
+      await obniz.wait(500);
+      servo.angle(10.0); // half position
+      await obniz.wait(500);
+      servo.angle(100.0); // half position
+      servo.off();
+      obniz.close();}
+
+
+
 
    // use reply API
    return client.replyMessage(event.replyToken, echo);
@@ -71,7 +119,24 @@ async function handleEvent(event) {
   else if (event.postback.data ===  'no') {
 
           // create a echoing text message
-   const echo = { type: 'text', text: "しっかりして！"};
+   //const echo = { type: 'text', text: "しっかりして！"};
+   const echo =
+   [
+    {
+        "type":"text",
+        "text":"しっかりしなさい！"
+    },
+    {
+      type: 'image',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/tsun.png`,
+      previewImageUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/tsun.png`
+    },
+    {
+      type: 'audio',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/sikkarisinasai.mp3`,
+      duration: 60000
+    }
+]
 
    // use reply API
    return client.replyMessage(event.replyToken, echo);
@@ -81,6 +146,66 @@ async function handleEvent(event) {
     
   
   } else if (event.message.type === 'text') {
+
+    let message = event.message.text.split("\n");
+    　 var registerflag = message[0];
+       var registertime = message[1];
+       var registerschedule = message[2];
+
+    if (registerflag === '登録') {
+
+     //DBへの接続
+  // <CreateClientObjectDatabaseContainer>
+  const { endpoint, key, databaseId, containerId } = configDB;
+
+  const clientDB = new CosmosClient({ endpoint, key });
+
+  const database = clientDB.database(databaseId);
+  const container = database.container(containerId);
+
+  // Make sure Tasks database is already setup. If not, create it.
+  await dbContext.create(clientDB, databaseId, containerId);
+  // </CreateClientObjectDatabaseContainer>
+  //ここまでDBへの接続
+
+   //DBへ登録
+  //  <DefineNewItem>
+const newItem = {
+  "id": uuidv4(),
+  "category": "schedule",
+  "time": registertime ,
+  "userId":event.source.userId,
+  "description": registerschedule ,
+  "audio": "https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/hamigaki.mp3" 
+};
+
+  //  </DefineNewItem>
+    // <CreateItem>
+    /** Create new item
+     * newItem is defined at the top of this file
+     */
+     const { resource: createdItem } = await container.items.create(newItem);
+    
+     // </CreateItem>
+     //ここまでDBへの登録
+
+  //const echo = { type: 'text', text: "登録したよ！"};
+  const echo =
+  [
+    {
+        "type":"text",
+        "text":"登録したよ！"
+    },
+    {
+      type: 'image',
+      originalContentUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/touroku.png`,
+      previewImageUrl: `https://fnstordmitcuzkwafv7xgh7a.blob.core.windows.net/files/touroku.png`
+    }
+];
+  // use reply API
+  //client.replyMessage(event.replyToken, echo);
+  return client.replyMessage(event.replyToken, echo);
+    }
     if (event.message.text === 'flex') {
       //https://developers.line.biz/ja/reference/messaging-api/#flex-message
       return client.replyMessage(event.replyToken,{
@@ -130,7 +255,7 @@ async function handleEvent(event) {
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     const stream = await client.getMessageContent(event.message.id);
     const data = await getStreamData(stream);
-    blockBlobClient.uploadData(data);
+    blockBlobClient.upload('test',4);
     return client.replyMessage(event.replyToken,{
       type: 'image',
       originalContentUrl: `https://${blobServiceClient.accountName}.blob.core.windows.net/files/${blobName}`,
@@ -173,49 +298,72 @@ async function handleEvent(event) {
   // </CreateClientObjectDatabaseContainer>
   //ここまでDBへの接続
 
-  //DBへ登録
-  //  <DefineNewItem>
-const newItem = {
-    id: "3",
-    category: "schedule",
-    time: "23:00",
-    description: "歯を磨く",
-  };
-  //  </DefineNewItem>
-    // <CreateItem>
-    /** Create new item
-     * newItem is defined at the top of this file
-     */
-     const { resource: createdItem } = await container.items.create(newItem);
-    
-//      // </CreateItem>
-//      //ここまでDBへの登録
 
-//      //DBから取得
-//     // <QueryItems>
-//     console.log(`Querying container: Items`);
 
-    // // query to return all items
-    // const querySpec = {
-    //   query: "SELECT * from c"
-    // };
-    
-    // // read all items in the Items container
-    // const { resources: items } = await container.items
-    //   .query(querySpec)
-    //   .fetchAll();
 
-    // let getitems = "";
-    // items.forEach(item => {
-    //   console.log(`${item.id} - ${item.description}`);
-    //   getitems =  getitems+item.description;
-    // });
 
-  // create a echoing text message
-   const echo = { type: 'text', text: event.source.userId};
 
+  // 音声合成 WebAPI の URL
+	const url = "https://webapi.aitalk.jp/webapi/v5/ttsget.php"
+
+	const params = {
+		'username': 'Happy-4-Hack-Day',
+		'password': 'Ht57e4y6',
+		'input_type': 'text',
+		'text': '変数',
+		'ext': 'mp3',
+		'speaker_name': 'akane_west_emo',
+		'volume': '1.0',
+		'speed': '1.0',
+		'pitch': '1.0',
+		'range': '1.0',
+		'epause': '800'
+	};
+
+
+	// パラメータを application/x-www-form-urlencoded の形式にする
+	const requestBody = Object.keys(params).map((key) => {
+		return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+	}).join('&');
+
+	// リクエスト実行
+	fetch(url, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+		},
+		body: requestBody
+	})
+	.then(response => response.blob())
+	.then((blob) => {
+	// 	// // エーアイの WebAPI は、音声データを作成するサービスです。
+	// 	// // 音声データの再生やファイル保存する際は、他のサービスをご利用ください。
+	// 	// // この例では、JavaScript の機能を利用して再生します。
+
+	// 	// const fileArea = document.getElementById('file-area');
+	// 	// const audio_element = document.createElement('audio');
+	// 	// if (fileArea.hasChildNodes()){
+	// 	// 	fileArea.removeChild(fileArea.firstChild);
+	// 	// }
+	// 	// audio_element.src = URL.createObjectURL(data);
+	// 	// audio_element.play();
+	// 	// audio_element.controls = true;
+	// 	// fileArea.appendChild(audio_element);
+
+    const blobName = uuidv4() + '.mp3'
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    //const audiodata = await getStreamData(data);
+    blockBlobClient.upload(blob,blob.size);
+    //blockBlobClient.uploadData(blob);  
+		
+		// 必要に応じて、revokeObjectURL を呼び出してください。
+	});
+
+
+
+  // const echo = { type: 'text', text: "test中"};
   // use reply API
-  return client.replyMessage(event.replyToken, echo);
+  //return client.replyMessage(event.replyToken, echo);
 }
 
 module.exports = createHandler(app);
