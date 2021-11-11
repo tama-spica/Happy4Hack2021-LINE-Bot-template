@@ -1,6 +1,14 @@
 //https://github.com/line/line-bot-sdk-nodejs/tree/next/examples/echo-bot
 //https://himanago.hatenablog.com/entry/2020/04/23/205202
 'use strict';
+// @ts-check DB関連の設定
+//  <ImportConfiguration>
+const CosmosClient = require("@azure/cosmos").CosmosClient;
+const configDB = require("./config");
+const dbContext = require("./data/databaseContext");
+//  </ImportConfiguration>
+
+//ここまでDB関連の設定
 
 const line = require('@line/bot-sdk');
 const createHandler = require("azure-function-express").createHandler;
@@ -132,9 +140,60 @@ async function handleEvent(event) {
       longitude: event.message.longitude
     });
   }
+//DBへの接続
+  // <CreateClientObjectDatabaseContainer>
+  const { endpoint, key, databaseId, containerId } = configDB;
+
+  const clientDB = new CosmosClient({ endpoint, key });
+
+  const database = clientDB.database(databaseId);
+  const container = database.container(containerId);
+
+  // Make sure Tasks database is already setup. If not, create it.
+  await dbContext.create(clientDB, databaseId, containerId);
+  // </CreateClientObjectDatabaseContainer>
+  //ここまでDBへの接続
+
+  //DBへ登録
+  //  <DefineNewItem>
+const newItem = {
+    id: "3",
+    category: "schedule",
+    time: "23:00",
+    description: "歯を磨く",
+  };
+  //  </DefineNewItem>
+    // <CreateItem>
+    /** Create new item
+     * newItem is defined at the top of this file
+     */
+     const { resource: createdItem } = await container.items.create(newItem);
+    
+     // </CreateItem>
+     //ここまでDBへの登録
+
+     //DBから取得
+    // <QueryItems>
+    console.log(`Querying container: Items`);
+
+    // query to return all items
+    const querySpec = {
+      query: "SELECT * from c"
+    };
+    
+    // read all items in the Items container
+    const { resources: items } = await container.items
+      .query(querySpec)
+      .fetchAll();
+
+    let getitems = "";
+    items.forEach(item => {
+      console.log(`${item.id} - ${item.description}`);
+      getitems =  getitems+item.description;
+    });
 
   // create a echoing text message
-  const echo = { type: 'text', text: event.message.text };
+   const echo = { type: 'text', text: getitems};
 
   // use reply API
   return client.replyMessage(event.replyToken, echo);
